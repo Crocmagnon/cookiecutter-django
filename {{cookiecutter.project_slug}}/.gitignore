@@ -1,0 +1,36 @@
+### Django ###
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+media
+public/*
+
+### Celery ###
+celerybeat.pid
+celerybeat-schedule
+
+### documentation ###
+documentation/*
+
+### Coverage ###
+coverage.*
+htmlcov/
+.coverage
+
+.python-version
+
+dashboard_templates/rendered/
+dashboard_templates/downloaded/
+pytest_result
+.DS_Store
+
+# files open in Excel
+~$*.xlsx
+
+src/public/static/
+import_files/
+test_reports/
+dashboard_templates/backup_*.zip

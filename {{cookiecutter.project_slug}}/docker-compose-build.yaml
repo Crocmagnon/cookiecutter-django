@@ -1,0 +1,8 @@
+version: "2.4"
+
+services:
+  django:
+    extends:
+      file: docker-compose.yaml
+      service: django
+    platform: linux/amd64

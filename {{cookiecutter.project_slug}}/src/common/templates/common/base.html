@@ -1,0 +1,28 @@
+{% load static django_htmx %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Character Sheet</title>
+    </head>
+    <body>
+        {% include "common/hello-random.html" %}
+        <script src="{% static 'vendor/htmx-1.8.2.min.js' %}" defer></script>
+        {% django_htmx_script %}
+        {% if debug %}
+            <script type="javascript">
+                if (typeof window.htmx !== "undefined") {
+                    htmx.on("htmx:afterSettle", function(detail) {
+                        if (
+                            typeof window.djdt !== "undefined"
+                            && detail.target instanceof HTMLBodyElement
+                        ) {
+                            djdt.show_toolbar();
+                        }
+                    });
+                }
+            </script>
+        {% endif %}
+    </body>
+</html>

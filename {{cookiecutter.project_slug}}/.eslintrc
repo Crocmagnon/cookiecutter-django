@@ -1,0 +1,56 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jquery": true
+  },
+  "extends": [
+    "eslint:recommended"
+  ],
+  "ignorePatterns": ["dist/", "node_modules/"],
+  "rules": {
+    "block-scoped-var": "error",
+    "consistent-return": "error",
+    "curly": "error",
+    "default-case": "error",
+    "default-param-last": ["error"],
+    "dot-notation": "error",
+    "eqeqeq": "error",
+    "guard-for-in": "error",
+    "max-classes-per-file": "error",
+    "no-alert": "error",
+    "no-caller": "error",
+    "no-else-return": "error",
+    "no-empty-function": "error",
+    "no-floating-decimal": "error",
+    "no-implicit-coercion": "error",
+    "no-implicit-globals": "error",
+    "no-multi-spaces": "error",
+    "no-multi-str": "error",
+    "no-param-reassign": "error",
+    "no-return-assign": "error",
+    "no-return-await": "error",
+    "no-self-compare": "error",
+    "no-throw-literal": "error",
+    "no-useless-concat": "error",
+    "radix": ["error", "as-needed"],
+    "require-await": "error",
+    "yoda": "error",
+    "no-shadow": "off",
+    "prefer-destructuring": ["error", { "array": false, "object": true }],
+    "padding-line-between-statements": [
+      "error",
+      { "blankLine": "always", "prev": "import", "next": "export" },
+      { "blankLine": "always", "prev": "export", "next": "export" },
+      { "blankLine": "always", "prev": "*", "next": "return" }
+    ]
+  },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "script"
+  },
+  "globals": {
+    "bootstrap": false,
+    "moment": false
+  }
+}

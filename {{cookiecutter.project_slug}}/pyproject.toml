@@ -1,0 +1,105 @@
+###############################################################################
+# poetry
+###############################################################################
+[tool.poetry]
+name = "{{cookiecutter.project_slug}}"
+version = "0.1.0"
+description = ""
+authors = ["Gabriel Augendre <gabriel@augendre.info>"]
+
+[tool.poetry.dependencies]
+python = ">=3.10.0, <4"
+django = "^4.0"
+django-cleanup = ">=6.0"
+django-environ = ">=0.9.0"
+django-htmx = ">=1.12.2"
+django-linear-migrations = ">=2.2.0"
+django-extensions = ">=3.1.5"
+psycopg2-binary = ">=2.8"
+whitenoise = ">=6.2"
+uWSGI = ">=2.0.21"
+
+[tool.poetry.dev-dependencies]
+django-debug-toolbar = ">=3.2"
+pytest = ">=6.0"
+pytest-cov = ">=3.0.0"
+pytest-django = ">=4.1.0"
+pytest-html = ">=3.1.1"
+pre-commit = ">=2.1"
+model-bakery = ">=1.3.1"
+freezegun = ">=1.1.0"
+bpython = ">=0.22.1"
+poetry-deps-scanner = ">=2.0.0"
+invoke = ">=1.7.3"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+###############################################################################
+# pytest
+###############################################################################
+[tool.pytest.ini_options]
+addopts = """
+--html=test_reports/pytest_result/pytest.html --color=yes --durations 20
+--no-cov-on-fail --strict-markers
+-W error
+"""
+markers = []
+minversion = "6.0"
+DJANGO_SETTINGS_MODULE = "{{cookiecutter.project_slug}}.settings"
+junit_family = "xunit1"
+norecursedirs = [
+    ".*",
+    "docker",
+    "documentation",
+    "static",
+    "public",
+]
+testpaths = [
+    "src",
+]
+python_files = [
+    "test_*.py",
+    "tests.py",
+]
+
+###############################################################################
+# flake8 / flakeheaven
+###############################################################################
+[tool.flakeheaven]
+max_complexity = 10
+format = "grouped"
+
+# Base rules
+#############################
+[tool.flakeheaven.plugins]
+"*" = [
+    "+*",
+    "-E501", # long lines
+    "-E203", # conflict with black on PEP8 interpretation
+    "-W503",  # deprecated rule: https://www.flake8rules.com/rules/W503.html
+]
+flake8-builtins = [
+    "+*",
+    "-A003", # class attribute is shadowing a python builtin
+]
+flake8-docstrings = [
+    "+*",
+    "-D1??", # missing docstring
+]
+flake8-bandit = [
+    "+*",
+    "-S308", # Use of mark_safe() may expose cross-site scripting vulnerabilities and should be reviewed.
+    "-S703", # Potential XSS on mark_safe function.
+]
+
+# Exceptions
+#############################
+[tool.flakeheaven.exceptions."**/tests/*"]
+flake8-bandit = [
+    "+*",
+    "-S101", # Use of assert detected.
+    "-S106", # Possible hardcoded password.
+    "-S311", # Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+]
