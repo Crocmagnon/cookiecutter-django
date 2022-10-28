@@ -9,6 +9,7 @@ COMMANDS_TO_RUN = [
     "git add poetry.lock",
     "git commit -m 'Add poetry lock file'",
     "pycharm .",
+    "inv test",
     "./src/manage.py migrate",
     "./src/manage.py createcachetable",
     "./src/manage.py createsuperuser",
