@@ -14,14 +14,19 @@ CONTRIB_DIR = PROJECT_ROOT / "contrib"
 
 env = environ.Env(
     DEBUG=(bool, False),
-    SECRET_KEY=str,
+    SECRET_KEY=(str, "{{ random_ascii_string(50, punctuation=True) }}"),
     ALLOWED_HOSTS=(list, []),
     DEBUG_TOOLBAR=(bool, True),
     STATIC_ROOT=(Path, BASE_DIR / "public" / "static"),
     LOG_LEVEL=(str, "DEBUG"),
     LOG_FORMAT=(str, "default"),
     APP_DATA=(Path, PROJECT_ROOT / "data"),
-    DATABASE_URL=str,
+    DATABASE_URL=(str, "sqlite:////app/db/db.sqlite3"),
+    REGISTRATION_OPEN=(bool, True),
+    MAILGUN_API_KEY=(str, ""),
+    MAILGUN_SENDER_DOMAIN=(str, ""),
+    MAILGUN_SENDER_ADDRESS=(str, ""),
+    CSRF_TRUSTED_ORIGINS=(list, ["http://localhost:8000"]),
 )
 
 env_file = os.getenv("ENV_FILE", None)
@@ -55,7 +60,9 @@ EXTERNAL_APPS = [
     "django_cleanup.apps.CleanupConfig",  # should be last: https://pypi.org/project/django-cleanup/
 ]
 if DEBUG_TOOLBAR:
-    EXTERNAL_APPS.append("debug_toolbar")
+    EXTERNAL_APPS.insert(-2, "debug_toolbar")
+if DEBUG:
+    EXTERNAL_APPS.insert(-2, "django_browser_reload")
 
 CUSTOM_APPS = [
     "whitenoise.runserver_nostatic",  # should be first
@@ -77,6 +84,8 @@ MIDDLEWARE = [
 ]
 if DEBUG_TOOLBAR:
     MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
+if DEBUG:
+    MIDDLEWARE.append("django_browser_reload.middleware.BrowserReloadMiddleware")
 
 ROOT_URLCONF = "{{cookiecutter.project_slug}}.urls"
 
@@ -204,3 +213,40 @@ LOGIN_URL = "/admin/login"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "common.User"
+
+ACCOUNT_ACTIVATION_DAYS = 2
+REGISTRATION_OPEN = env("REGISTRATION_OPEN")
+
+ANYMAIL = {
+    "MAILGUN_API_KEY": env("MAILGUN_API_KEY"),
+    "MAILGUN_SENDER_DOMAIN": env("MAILGUN_SENDER_DOMAIN"),
+}
+EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+DEFAULT_FROM_EMAIL = env("MAILGUN_SENDER_ADDRESS")
+SERVER_EMAIL = env("MAILGUN_SENDER_ADDRESS")
+
+if DEBUG:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+APP = {
+    "build": {
+        "date": "latest-date",
+        "commit": "latest-commit",
+        "describe": "latest-describe",
+    }
+}
+try:
+    with open("/app/git/build-date") as f:
+        APP["build"]["date"] = f.read().strip()
+except Exception:  # noqa: S110
+    pass
+try:
+    with open("/app/git/git-commit") as f:
+        APP["build"]["commit"] = f.read().strip()
+except Exception:  # noqa: S110
+    pass
+try:
+    with open("/app/git/git-describe") as f:
+        APP["build"]["describe"] = f.read().strip()
+except Exception:  # noqa: S110
+    pass

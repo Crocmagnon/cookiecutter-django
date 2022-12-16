@@ -1,0 +1,10 @@
+{% extends "common/base.html" %}
+
+{% block content %}
+    <h1>Inscription</h1>
+    <form action="{% url "django_registration_register" %}" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="S'inscrire">
+    </form>
+{% endblock %}
