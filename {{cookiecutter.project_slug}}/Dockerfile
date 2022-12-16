@@ -96,7 +96,6 @@ COPY --chown=django:django --from=venv $STATIC_ROOT $STATIC_ROOT
 WORKDIR /app
 COPY pyproject.toml poetry.lock ./
 ADD --chown=django:django ./src ./src
-ADD --chown=django:django ./docker ./docker
 COPY --chown=django:django tasks.py ./tasks.py
 
 
@@ -110,4 +109,4 @@ WORKDIR /app/src
 HEALTHCHECK --start-period=30s CMD python -c "import requests; requests.get('http://localhost:8000', timeout=2)"
 
 USER django
-CMD ["/app/docker/run.sh"]
+CMD ["gunicorn", "{{cookiecutter.project_slug}}.wsgi", "--graceful-timeout=5", "--worker-tmp-dir=/dev/shm", "--workers=2", "--threads=4", "--worker-class=gthread", "--bind=0.0.0.0:8000", "--log-file=-"]

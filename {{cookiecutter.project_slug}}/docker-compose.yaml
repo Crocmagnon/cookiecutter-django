@@ -4,7 +4,6 @@ services:
   django:
     build: .
     image: crocmagnon/{{cookiecutter.project_slug}}
-    command: /app/src/manage.py runserver 0.0.0.0:8000
     env_file:
       - envs/docker-local-envs.env
     volumes:
