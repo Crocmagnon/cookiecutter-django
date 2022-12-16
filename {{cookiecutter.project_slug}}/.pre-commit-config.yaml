@@ -1,4 +1,7 @@
 exclude: \.min\.(js|css)(\.map)?$|^\.idea/
+ci:
+  skip: [pip-compile]
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.3.0
@@ -69,3 +72,18 @@ repos:
         additional_dependencies:
           - eslint@^7.29.0
           - eslint-config-prettier@^8.3.0
+  - repo: https://github.com/jazzband/pip-tools
+    rev: 6.11.0
+    hooks:
+      - id: pip-compile
+        name: pip-compile requirements.txt
+        args: [-q, --allow-unsafe, --resolver=backtracking, --generate-hashes, requirements.in]
+        files: ^requirements\.(in|txt)$
+      - id: pip-compile
+        name: pip-compile constraints.txt
+        args: [-q, --allow-unsafe, --resolver=backtracking, --strip-extras, --output-file=constraints.txt, requirements.in]
+        files: ^requirements\.in|constraints\.txt$
+      - id: pip-compile
+        name: pip-compile requirements-dev.in
+        args: [-q, --allow-unsafe, --resolver=backtracking, --generate-hashes, requirements-dev.in]
+        files: ^requirements-dev\.(in|txt)$

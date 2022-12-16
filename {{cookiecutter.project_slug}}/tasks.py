@@ -1,7 +1,6 @@
 import time
 from pathlib import Path
 
-import requests
 from invoke import task
 
 BASE_DIR = Path(__file__).parent.resolve(strict=True)
@@ -9,6 +8,28 @@ SRC_DIR = BASE_DIR / "src"
 COMPOSE_BUILD_FILE = BASE_DIR / "docker-compose-build.yaml"
 COMPOSE_BUILD_ENV = {"COMPOSE_FILE": COMPOSE_BUILD_FILE}
 TEST_ENV = {"ENV_FILE": BASE_DIR / "envs" / "test-envs.env"}
+
+
+@task
+def update_dependencies(ctx):
+    common_args = "-q --allow-unsafe --resolver=backtracking --upgrade"
+    with ctx.cd(BASE_DIR):
+        ctx.run(
+            f"pip-compile {common_args} --generate-hashes requirements.in",
+            pty=True,
+            echo=True,
+        )
+        ctx.run(
+            f"pip-compile {common_args} --strip-extras -o constraints.txt requirements.in",
+            pty=True,
+            echo=True,
+        )
+        ctx.run(
+            f"pip-compile {common_args} --generate-hashes requirements-dev.in",
+            pty=True,
+            echo=True,
+        )
+        ctx.run("pip-sync requirements.txt requirements-dev.txt", pty=True, echo=True)
 
 
 @task
@@ -74,6 +95,8 @@ def deploy(ctx):
 
 @task
 def check_alive(ctx):
+    import requests
+
     exception = None
     for _ in range(5):
         try:

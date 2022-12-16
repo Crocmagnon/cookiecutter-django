@@ -1,56 +1,7 @@
 ##############################################
-# Build virtualenv
-##############################################
-FROM python:{{cookiecutter.python_version}}-bullseye AS venv
-
-# Prepare poetry
-##############################################
-# https://python-poetry.org/docs/#installation
-ENV POETRY_VERSION={{cookiecutter.poetry_version}}
-RUN curl -sSL https://install.python-poetry.org | python3 -
-
-ENV PATH /root/.local/bin:$PATH
-
-RUN python -m pip install --user poetry-lock-check==0.1.0 \
-    cleo==0.8.1  # poetry-lock-check depends on cleo
-
-WORKDIR /app
-COPY pyproject.toml poetry.lock ./
-
-RUN python -m poetry_lock_check check-lock
-
-# Install python dependencies
-##############################################
-RUN python -m venv --copies /app/venv
-# Will install dev deps as well, so that we can run tests in this image
-RUN . /app/venv/bin/activate \
-    && poetry install --no-interaction
-
-ENV PATH /app/venv/bin:$PATH
-
-# Collect static files & build assets
-##############################################
-
-COPY ./src /app/src
-COPY ./envs/local-envs.env /app/.env
-WORKDIR /app/src
-
-# Required for manage.py to startup
-ARG ENV_FILE=/app/.env
-ARG DEBUG=true
-ENV STATIC_ROOT=/app/static
-
-RUN mkdir -p $STATIC_ROOT
-
-# Build assets so that we don't need the build tools later
-RUN python manage.py collectstatic --noinput --clear
-
-
-
-##############################################
 # write git info
 ##############################################
-FROM alpine/git:v2.26.2 AS git
+FROM alpine/git:v2.36.3 AS git
 
 WORKDIR /app
 COPY .git /app/.git/
@@ -82,25 +33,26 @@ RUN apt-get update -y \
 
 # Fetch project requirements
 ##############################################
-COPY --chown=django:django --from=venv /app/venv /app/venv/
 COPY --chown=django:django --from=git /git-describe /git-commit /build-date /app/git/
-ENV PATH /app/venv/bin:$PATH
-
-# Fetch built assets & static files
-##############################################
-ENV STATIC_ROOT=/app/static
-COPY --chown=django:django --from=venv $STATIC_ROOT $STATIC_ROOT
 
 # Create directory structure
 ##############################################
 WORKDIR /app
-COPY pyproject.toml poetry.lock ./
+COPY --chown=django:django pyproject.toml requirements.txt ./
 ADD --chown=django:django ./src ./src
 COPY --chown=django:django tasks.py ./tasks.py
 
+RUN mkdir -p /app/data /app/db
+RUN chown django:django /app /app/data /app/db
 
-RUN mkdir -p /app/data
-RUN chown django:django /app /app/data
+ENV STATIC_ROOT=/app/static
+ENV SECRET_KEY "changeme"
+ENV DEBUG "false"
+ENV DATABASE_URL "sqlite:////app/db/db.sqlite3"
+
+RUN python -m pip install --no-cache-dir -r requirements.txt
+WORKDIR /app/src
+RUN python manage.py collectstatic --noinput --clear
 
 EXPOSE 8000
 

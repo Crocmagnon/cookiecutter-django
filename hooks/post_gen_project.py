@@ -2,12 +2,13 @@ import os
 
 
 COMMANDS_TO_RUN = [
-    "poetry install",
+    "pip install -U pip pip-tools invoke",
+    "inv update-dependencies",
     "pre-commit install",
     "pre-commit autoupdate",
     "pre-commit run --all-files",
-    "git add poetry.lock",
-    "git commit -m 'Add poetry lock file'",
+    "git add ./*.txt",
+    "git commit -m 'Freeze dependencies'",
     "pycharm .",
     "inv test",
     "./src/manage.py migrate",
