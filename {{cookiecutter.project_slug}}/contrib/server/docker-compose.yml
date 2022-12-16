@@ -1,0 +1,20 @@
+version: '2.4'
+services:
+  django:
+    image: crocmagnon/{{cookiecutter.project_slug}}
+    env_file:
+      - .env
+    volumes:
+      - ./db:/app/db
+      - ./data:/app/data
+    networks:
+      - frontend
+    user: 1000:1000
+    restart: always
+    init: true
+    tty: true
+    mem_limit: 512m
+
+networks:
+  frontend:
+    external: true

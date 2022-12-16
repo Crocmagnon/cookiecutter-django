@@ -1,0 +1,8 @@
+#!/bin/bash
+set -euxo pipefail
+pushd /mnt/data/{{cookiecutter.project_slug}}
+docker compose --ansi never pull --quiet
+docker compose --ansi never up -d
+docker compose exec django python manage.py migrate
+popd
+docker image prune -f
