@@ -174,8 +174,21 @@ LOGGING = {
             "level": "INFO",  # set to DEBUG for SQL log
             "propagate": False,
         },
+        "root": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": False,
+        },
     },
 }
+
+for app in CUSTOM_APPS:
+    LOGGING["loggers"][app] = {
+        "handlers": ["console"],
+        "level": env("LOG_LEVEL"),
+        "propagate": False,
+    }
+
 
 DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TOOLBAR_CALLBACK": "{{ cookiecutter.project_slug }}.middleware.debug_toolbar_bypass_internal_ips",
