@@ -14,7 +14,7 @@ CONTRIB_DIR = PROJECT_ROOT / "contrib"
 
 env = environ.Env(
     DEBUG=(bool, False),
-    SECRET_KEY=(str, "{{ random_ascii_string(50, punctuation=True) }}"),
+    SECRET_KEY=(str, "{{ random_ascii_string(50, punctuation=False) }}"),
     ALLOWED_HOSTS=(list, []),
     DEBUG_TOOLBAR=(bool, True),
     STATIC_ROOT=(Path, BASE_DIR / "public" / "static"),
