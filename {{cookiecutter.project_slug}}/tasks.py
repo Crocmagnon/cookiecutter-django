@@ -1,7 +1,6 @@
-import time
 from pathlib import Path
 
-from invoke import task
+from invoke import Context, task
 
 BASE_DIR = Path(__file__).parent.resolve(strict=True)
 SRC_DIR = BASE_DIR / "src"
@@ -11,8 +10,10 @@ TEST_ENV = {"ENV_FILE": BASE_DIR / "envs" / "test-envs.env"}
 
 
 @task
-def update_dependencies(ctx):
-    common_args = "-q --allow-unsafe --resolver=backtracking --upgrade"
+def sync_dependencies(ctx: Context, update: bool = False):
+    common_args = "-q --allow-unsafe --resolver=backtracking"
+    if update:
+        common_args += " --upgrade"
     with ctx.cd(BASE_DIR):
         ctx.run(
             f"pip-compile {common_args} --generate-hashes requirements.in",
@@ -33,25 +34,30 @@ def update_dependencies(ctx):
 
 
 @task
-def makemessages(ctx):
+def update_dependencies(ctx: Context):
+    return sync_dependencies(ctx, update=True)
+
+
+@task
+def makemessages(ctx: Context):
     with ctx.cd(SRC_DIR):
         ctx.run("./manage.py makemessages -l en -l fr", pty=True, echo=True)
 
 
 @task
-def compilemessages(ctx):
+def compilemessages(ctx: Context):
     with ctx.cd(SRC_DIR):
         ctx.run("./manage.py compilemessages -l en -l fr", pty=True, echo=True)
 
 
 @task
-def test(ctx):
+def test(ctx: Context):
     with ctx.cd(SRC_DIR):
         ctx.run("pytest", pty=True, echo=True, env=TEST_ENV)
 
 
 @task
-def test_cov(ctx):
+def test_cov(ctx: Context):
     with ctx.cd(SRC_DIR):
         ctx.run(
             "pytest --cov=. --cov-branch --cov-report term-missing:skip-covered",
@@ -62,61 +68,7 @@ def test_cov(ctx):
 
 
 @task
-def pre_commit(ctx):
-    with ctx.cd(BASE_DIR):
-        ctx.run("pre-commit run --all-files", pty=True)
-
-
-@task(pre=[pre_commit, test_cov])
-def check(ctx):
-    pass
-
-
-@task
-def build(ctx):
-    with ctx.cd(BASE_DIR):
-        ctx.run(
-            "docker-compose build django", pty=True, echo=True, env=COMPOSE_BUILD_ENV
-        )
-
-
-@task
-def publish(ctx):
-    with ctx.cd(BASE_DIR):
-        ctx.run(
-            "docker-compose push django", pty=True, echo=True, env=COMPOSE_BUILD_ENV
-        )
-
-
-@task
-def deploy(ctx):
-    ctx.run("ssh ubuntu /mnt/data/checkout/update", pty=True, echo=True)
-
-
-@task
-def check_alive(ctx):
-    import requests
-
-    exception = None
-    for _ in range(5):
-        try:
-            res = requests.get("https://{{cookiecutter.project_slug}}.augendre.info")
-            res.raise_for_status()
-            print("Server is up & running")
-            return
-        except requests.exceptions.HTTPError as e:
-            time.sleep(2)
-            exception = e
-    raise RuntimeError("Failed to reach the server") from exception
-
-
-@task(pre=[check, build, publish, deploy], post=[check_alive])
-def beam(ctx):
-    pass
-
-
-@task
-def download_db(ctx):
+def download_db(ctx: Context):
     with ctx.cd(BASE_DIR):
         ctx.run("scp ubuntu:/mnt/data/{{cookiecutter.project_slug}}/db/db.sqlite3 ./db/db.sqlite3")
         ctx.run("rm -rf src/media/")

@@ -1,0 +1,52 @@
+name: Build, publish & deploy
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    uses: ./.github/workflows/test.yaml
+  push_to_registry:
+    name: Push Docker image to Docker Hub
+    runs-on: ubuntu-latest
+    needs: [tests]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2{% raw %}
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}{% endraw %}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: crocmagnon/{{cookiecutter.project_slug}}:latest
+          cache-from: type=registry,ref=crocmagnon/{{cookiecutter.project_slug}}:latest
+          cache-to: type=inline
+          platforms: linux/amd64
+  deploy:
+    name: Deploy new image
+    runs-on: ubuntu-latest
+    needs: [push_to_registry]
+    steps:
+      - name: Deploy{% raw %}
+        run: |
+          TEMP=$(mktemp)
+          echo "${{ secrets.DEPLOY_KEY }}" > $TEMP
+          ssh -o StrictHostKeyChecking=no -i $TEMP -p ${{ secrets.DEPLOY_PORT }} ${{ secrets.DEPLOY_USERNAME }}@${{ secrets.DEPLOY_HOST }} /mnt/data/{{cookiecutter.project_slug}}/update{% endraw %}
+      - name: Check
+        uses: nick-fields/retry@v2
+        with:
+          timeout_seconds: 30
+          max_attempts: 5
+          retry_wait_seconds: 2
+          warning_on_retry: false
+          command: curl -sSL --fail -m 10 https://{{cookiecutter.project_slug}}.augendre.info | grep ${GITHUB_SHA::7} > /dev/null
