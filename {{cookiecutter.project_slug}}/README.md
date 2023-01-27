@@ -1,4 +1,4 @@
-# {{cookiecutter.project_slug}}
+# {{cookiecutter.project_name}}
 
 ## Quick start
 Clone, then
