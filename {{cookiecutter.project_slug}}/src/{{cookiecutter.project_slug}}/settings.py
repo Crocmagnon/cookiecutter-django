@@ -19,7 +19,6 @@ env = environ.Env(
     DEBUG_TOOLBAR=(bool, True),
     STATIC_ROOT=(Path, BASE_DIR / "public" / "static"),
     LOG_LEVEL=(str, "DEBUG"),
-    LOG_FORMAT=(str, "default"),
     APP_DATA=(Path, PROJECT_ROOT / "data"),
     DATABASE_URL=(str, "sqlite:////app/db/db.sqlite3"),
     REGISTRATION_OPEN=(bool, True),
