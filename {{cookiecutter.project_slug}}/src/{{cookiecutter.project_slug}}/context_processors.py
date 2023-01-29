@@ -1,5 +1,5 @@
 from django.conf import settings
 
 
-def app(request):
+def app(_):
     return settings.APP

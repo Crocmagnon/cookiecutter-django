@@ -10,7 +10,7 @@ TEST_ENV = {"ENV_FILE": BASE_DIR / "envs" / "test-envs.env"}
 
 
 @task
-def sync_dependencies(ctx: Context, update: bool = False):
+def sync_dependencies(ctx: Context, *, update: bool = False):
     common_args = "-q --allow-unsafe --resolver=backtracking"
     if update:
         common_args += " --upgrade"

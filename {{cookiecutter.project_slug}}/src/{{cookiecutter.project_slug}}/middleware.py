@@ -1,7 +1,7 @@
 from django.conf import settings
 
 
-def debug_toolbar_bypass_internal_ips(request) -> bool:
+def debug_toolbar_bypass_internal_ips(_) -> bool:
     """
     Display debug toolbar according to the DEBUG_TOOLBAR setting only.
 

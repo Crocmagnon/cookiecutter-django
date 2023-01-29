@@ -6,7 +6,7 @@ from django.shortcuts import render
 
 
 def hello_world(request: WSGIRequest) -> HttpResponse:
-    context = {"value": random.randint(1, 1000)}  # noqa: S311
+    context = {"value": random.randint(1, 1000)}
     if request.htmx:
         return render(request, "common/hello-random.html", context)
     return render(request, "common/base.html", context)

@@ -4,7 +4,7 @@
 [tool.pytest.ini_options]
 addopts = """
 --html=test_reports/pytest_result/pytest.html --color=yes --durations 20
---no-cov-on-fail --strict-markers
+--no-cov-on-fail --strict-markers --reuse-db
 -W error
 """
 markers = []
@@ -27,41 +27,77 @@ python_files = [
 ]
 
 ###############################################################################
-# flake8 / flakeheaven
+# ruff
 ###############################################################################
-[tool.flakeheaven]
-max_complexity = 10
-format = "grouped"
+[tool.ruff]
+src = ["src"]
+target-version = "{{ cookiecutter.python_version_slug }}"
+select = [
+    "F",  # pyflakes
+    "E", "W",  # pycodestyle
+    "C90",  # mccabe
+    "I",  # isort
+    "N",  # pep8-naming
+    "D",  # pydocstyle
+    "S",  # flake8-bandit
+    "FBT",  # flake8-boolean-trap
+    "B",  # flake8-bugbear
+    "A",  # flake8-builtins
+    "C4",  # flake8-comprehensions
+    "DTZ",  # flake8-datetimez
+    "T10",  # flake8-debugger
+    "EXE",  # flake8-executable
+    "ISC",  # flake8-implicit-str-concat
+    "ICN",  # flake8-import-conventions
+    "G",  # flake8-logging-format
+    "INP",  # flake8-no-pep420
+    "PIE",  # flake8-pie
+    "T20",  # flake8-print
+    "PT",  # flake8-pytest-style
+    "RET",  # flake8-return
+    "SIM",  # flake8-simplify
+    "TID",  # flake8-tidy-imports
+    "ARG",  # flake8-unused-arguments
+    "PTH",  # flake8-use-pathlib
+    "ERA",  # eradicate
+    "PD",  # pandas-vet
+    "PGH",  # pygrep-hooks
+    "PL",  # pylint
+    "TRY",  # tryceratops
+    "RUF",  # ruff-specific rules
+]
+unfixable = ["T20", "RUF001", "RUF002", "RUF003"]
 
-# Base rules
-#############################
-[tool.flakeheaven.plugins]
-"*" = [
-    "+*",
-    "-E501", # long lines
-    "-E203", # conflict with black on PEP8 interpretation
-    "-W503",  # deprecated rule: https://www.flake8rules.com/rules/W503.html
-]
-flake8-builtins = [
-    "+*",
-    "-A003", # class attribute is shadowing a python builtin
-]
-flake8-docstrings = [
-    "+*",
-    "-D1??", # missing docstring
-]
-flake8-bandit = [
-    "+*",
-    "-S308", # Use of mark_safe() may expose cross-site scripting vulnerabilities and should be reviewed.
-    "-S703", # Potential XSS on mark_safe function.
+ignore = [
+    "UP",  # pyupgrade
+    "YTT",  # flake8-2020
+    "ANN",  # flake8-annotations
+    "BLE",  # flake8-blind-except
+    "COM",  # flake8-commas
+    "EM",  # flake8-errmsg
+    "Q",  # flake8-quotes
+    "TCH",  # flake8-type-checking / TODO: revisit later ?
+
+    "E501",  # long lines
+    "D1",  # missing docstring
+    "TRY003",  # Avoid specifying long messages outside the exception class
 ]
 
-# Exceptions
-#############################
-[tool.flakeheaven.exceptions."**/tests/*"]
-flake8-bandit = [
-    "+*",
-    "-S101", # Use of assert detected.
-    "-S106", # Possible hardcoded password.
-    "-S311", # Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+[tool.ruff.per-file-ignores]
+"**/tests/*" = [
+    "S101",  # Use of assert detected.
+    "S106",  # Possible hardcoded password.
+    "B011",  # Do not call assert False since python -O removes these calls.
+    "ARG001",  # Unused function argument (mostly fixtures)
+    "PLR2004",  # Magic value used in comparison, consider replacing {value} with a constant variable
 ]
+# File {name} is part of an implicit namespace package. Add an `__init__.py`.
+"tasks.py" = ["INP001"]
+"src/conftest.py" = ["INP001"]
+"src/manage.py" = ["INP001"]
+
+[tool.ruff.pydocstyle]
+convention = "pep257"
+
+[tool.ruff.mccabe]
+max-complexity = 10

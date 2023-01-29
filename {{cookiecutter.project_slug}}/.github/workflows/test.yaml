@@ -24,6 +24,8 @@ jobs:
         run: |
           pip install pip-tools
           pip-sync requirements.txt requirements-dev.txt
+      - name: Ruff
+        run: ruff --format=github .
       - name: Test
         run: pytest --cov=. --cov-branch --cov-report term-missing:skip-covered
         working-directory: ./src/

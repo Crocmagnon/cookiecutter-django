@@ -27,40 +27,26 @@ repos:
     rev: v3.3.1
     hooks:
       - id: pyupgrade
-        args: [--py311-plus]
+        args: [--{{ cookiecutter.python_version_slug }}-plus]
   - repo: https://github.com/adamchainz/django-upgrade
     rev: 1.12.0
     hooks:
       - id: django-upgrade
         args: [--target-version, "4.1"]
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.11.4
-    hooks:
-      - id: isort
-        args: [--profile, black]
   - repo: https://github.com/psf/black
     rev: 22.12.0
     hooks:
       - id: black
-        args: [--target-version, py311]
+        args: [--target-version, {{ cookiecutter.python_version_slug }}]
   - repo: https://github.com/rtts/djhtml
     rev: v1.5.2
     hooks:
       - id: djhtml
-  - repo: https://github.com/flakeheaven/flakeheaven
-    rev: 3.2.1
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: 'v0.0.237'
     hooks:
-      - id: flakeheaven
-        additional_dependencies:
-          - flake8-annotations-complexity
-          - flake8-bandit
-          - flake8-builtins
-          - flake8-bugbear
-          - flake8-comprehensions
-          - flake8-docstrings
-          - flake8-eradicate
-          - flake8-noqa
-          - pep8-naming
+      - id: ruff
+        args: [--fix]
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v3.0.0-alpha.4
     hooks:
