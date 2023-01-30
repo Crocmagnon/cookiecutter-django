@@ -10,7 +10,12 @@ TEST_ENV = {"ENV_FILE": BASE_DIR / "envs" / "test-envs.env"}
 
 
 @task
-def sync_dependencies(ctx: Context, *, update: bool = False):
+def update_dependencies(ctx: Context, *, sync: bool = True):
+    return compile_dependencies(ctx, update=True, sync=sync)
+
+
+@task
+def compile_dependencies(ctx: Context, *, update: bool = False, sync: bool = False):
     common_args = "-q --allow-unsafe --resolver=backtracking"
     if update:
         common_args += " --upgrade"
@@ -30,12 +35,14 @@ def sync_dependencies(ctx: Context, *, update: bool = False):
             pty=True,
             echo=True,
         )
-        ctx.run("pip-sync requirements.txt requirements-dev.txt", pty=True, echo=True)
+    if sync:
+        sync_dependencies(ctx)
 
 
 @task
-def update_dependencies(ctx: Context):
-    return sync_dependencies(ctx, update=True)
+def sync_dependencies(ctx: Context):
+    with ctx.cd(BASE_DIR):
+        ctx.run("pip-sync requirements.txt requirements-dev.txt", pty=True, echo=True)
 
 
 @task
