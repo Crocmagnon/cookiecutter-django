@@ -64,13 +64,13 @@ select = [
     "PD",  # pandas-vet
     "PGH",  # pygrep-hooks
     "PL",  # pylint
+    "UP",  # pyupgrade
     "TRY",  # tryceratops
     "RUF",  # ruff-specific rules
 ]
 unfixable = ["T20", "RUF001", "RUF002", "RUF003"]
 
 ignore = [
-    "UP",  # pyupgrade
     "YTT",  # flake8-2020
     "ANN",  # flake8-annotations
     "BLE",  # flake8-blind-except
