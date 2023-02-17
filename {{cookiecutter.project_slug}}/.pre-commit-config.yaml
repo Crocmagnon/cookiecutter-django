@@ -63,6 +63,10 @@ repos:
         additional_dependencies:
           - eslint@8.32.0
           - eslint-config-prettier@8.5.0
+  - repo: https://github.com/tox-dev/pyproject-fmt
+    rev: 0.9.1
+    hooks:
+      - id: pyproject-fmt
   - repo: https://github.com/jazzband/pip-tools
     rev: 6.12.1
     hooks:
