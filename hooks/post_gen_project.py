@@ -7,7 +7,7 @@ COMMANDS_TO_RUN = [
     "pre-commit install",
     "pre-commit autoupdate",
     "pre-commit run --all-files",
-    "git add ./*.txt",
+    "git add .",
     "git commit -m 'Freeze dependencies'",
     "pycharm .",
     "inv test",
@@ -21,8 +21,6 @@ def main():
     os.system("git init")
     os.system("git add .")
     os.system("git commit -m 'Initial commit'")
-    os.system("pyenv virtualenv {{cookiecutter.python_version}} {{cookiecutter.project_slug}}")
-    os.system("pyenv local {{cookiecutter.project_slug}}")
     print("\nWe created a virtualenv using {{cookiecutter.python_version}} for you.")
     print("Run the following commands:")
     print("cd {{cookiecutter.project_slug}} && direnv allow")

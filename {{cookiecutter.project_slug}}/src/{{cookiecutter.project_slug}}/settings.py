@@ -238,15 +238,15 @@ APP = {
 try:
     with Path("/app/git/build-date").open() as f:
         APP["build"]["date"] = f.read().strip()
-except Exception:
-    pass  # noqa: S110
+except Exception:  # noqa: S110
+    pass
 try:
     with Path("/app/git/git-commit").open() as f:
         APP["build"]["commit"] = f.read().strip()
-except Exception:
-    pass  # noqa: S110
+except Exception:  # noqa: S110
+    pass
 try:
     with Path("/app/git/git-describe").open() as f:
         APP["build"]["describe"] = f.read().strip()
-except Exception:
-    pass  # noqa: S110
+except Exception:  # noqa: S110
+    pass
