@@ -3,8 +3,8 @@
 ## Quick start
 Clone, then
 ```shell
-pip install pip-tools
-pip-sync requirements.txt requirements-dev.txt
+pip install -U pip pip-tools invoke
+inv sync-dependencies
 pre-commit install --install-hooks
 inv test
 ./src/manage.py migrate
