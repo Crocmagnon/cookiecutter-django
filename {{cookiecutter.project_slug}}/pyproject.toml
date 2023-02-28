@@ -33,50 +33,12 @@ python_files = [
 [tool.ruff]
 src = ["src"]
 target-version = "{{ cookiecutter.python_version_slug }}"
-select = [
-    "F",  # pyflakes
-    "E", "W",  # pycodestyle
-    "C90",  # mccabe
-    "I",  # isort
-    "N",  # pep8-naming
-    "D",  # pydocstyle
-    "S",  # flake8-bandit
-    "FBT",  # flake8-boolean-trap
-    "B",  # flake8-bugbear
-    "A",  # flake8-builtins
-    "C4",  # flake8-comprehensions
-    "DTZ",  # flake8-datetimez
-    "T10",  # flake8-debugger
-    "EXE",  # flake8-executable
-    "ISC",  # flake8-implicit-str-concat
-    "ICN",  # flake8-import-conventions
-    "G",  # flake8-logging-format
-    "INP",  # flake8-no-pep420
-    "PIE",  # flake8-pie
-    "T20",  # flake8-print
-    "PT",  # flake8-pytest-style
-    "RET",  # flake8-return
-    "SIM",  # flake8-simplify
-    "TID",  # flake8-tidy-imports
-    "ARG",  # flake8-unused-arguments
-    "PTH",  # flake8-use-pathlib
-    "ERA",  # eradicate
-    "PD",  # pandas-vet
-    "PGH",  # pygrep-hooks
-    "PL",  # pylint
-    "UP",  # pyupgrade
-    "TRY",  # tryceratops
-    "RUF",  # ruff-specific rules
-]
+select = ["ALL"]
 unfixable = ["T20", "RUF001", "RUF002", "RUF003"]
 
 ignore = [
-    "YTT",  # flake8-2020
     "ANN",  # flake8-annotations
     "BLE",  # flake8-blind-except
-    "COM",  # flake8-commas
-    "EM",  # flake8-errmsg
-    "Q",  # flake8-quotes
     "TCH",  # flake8-type-checking / TODO: revisit later ?
 
     "E501",  # long lines
