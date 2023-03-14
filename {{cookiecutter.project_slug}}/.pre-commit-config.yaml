@@ -67,7 +67,7 @@ repos:
     hooks:
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [-q, --allow-unsafe, --resolver=backtracking, --generate-hashes, requirements.in]
+        args: [-q, --allow-unsafe, --resolver=backtracking, requirements.in]
         files: ^requirements\.(in|txt)$
       - id: pip-compile
         name: pip-compile constraints.txt
@@ -75,5 +75,5 @@ repos:
         files: ^requirements\.in|constraints\.txt$
       - id: pip-compile
         name: pip-compile requirements-dev.txt
-        args: [-q, --allow-unsafe, --resolver=backtracking, --generate-hashes, requirements-dev.in]
+        args: [-q, --allow-unsafe, --resolver=backtracking, requirements-dev.in]
         files: ^requirements-dev\.(in|txt)$

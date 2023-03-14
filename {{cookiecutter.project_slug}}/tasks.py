@@ -21,7 +21,7 @@ def compile_dependencies(ctx: Context, *, update: bool = False, sync: bool = Fal
         common_args += " --upgrade"
     with ctx.cd(BASE_DIR):
         ctx.run(
-            f"pip-compile {common_args} --generate-hashes requirements.in",
+            f"pip-compile {common_args} requirements.in",
             pty=True,
             echo=True,
         )
@@ -31,7 +31,7 @@ def compile_dependencies(ctx: Context, *, update: bool = False, sync: bool = Fal
             echo=True,
         )
         ctx.run(
-            f"pip-compile {common_args} --generate-hashes requirements-dev.in",
+            f"pip-compile {common_args} requirements-dev.in",
             pty=True,
             echo=True,
         )
